@@ -8,26 +8,24 @@ namespace Virtue
         {
             Console.WriteLine($"== {name} ==");
 
-            for (var offset = 0; offset < chunk.CodeCount;)
-            {
+            for (var offset = 0; offset < chunk.Code.Count;)
                 offset = DisassembleInstruction(chunk, offset);
-            }
         }
 
         public static int DisassembleInstruction(Chunk chunk, int offset)
         {
             Console.Write($"{offset:D4} ");
 
-            if (offset > 0 && chunk.GetLineAt(offset) == chunk.GetLineAt(offset - 1))
+            if (offset > 0 && chunk.Lines[offset] == chunk.Lines[offset - 1])
             {
                 Console.Write("   | ");
             }
             else
             {
-                Console.Write($"{chunk.GetLineAt(offset):D4} ");
+                Console.Write($"{chunk.Lines[offset]:D4} ");
             }
 
-            var instruction = (OpCode)chunk.GetCodeAt(offset);
+            var instruction = (OpCode)chunk.Code[offset];
             switch (instruction)
             {
                 case OpCode.Constant:
@@ -47,9 +45,9 @@ namespace Virtue
 
         private static int ConstantInstruction(string name, Chunk chunk, int offset)
         {
-            var constantIndex = chunk.GetCodeAt(offset + 1);
-            Console.Write($"{name,-16} {constantIndex:D4} '");
-            PrintValue(chunk.GetConstantAt(constantIndex));
+            var index = chunk.Code[offset + 1];
+            Console.Write($"{name,-16} {index:D4} '");
+            PrintValue(chunk.Constants[index]);
             Console.WriteLine();
             return offset + 2;
         }

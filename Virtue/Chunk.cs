@@ -1,44 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Virtue
 {
     internal class Chunk
     {
-        private readonly List<byte> _code;
-        private readonly List<double> _constants;
-        private readonly List<int> _lines;
-
-        public int CodeCount => _code.Count;
-
-        public byte GetCodeAt(int index) => _code[index];
-
-        public double GetConstantAt(int index) => _constants[index];
-
-        public int GetLineAt(int index) => _lines[index];
-
-        public Chunk()
-        {
-            _code = new List<byte>();
-            _constants = new List<double>();
-            _lines = new List<int>();
-        }
+        public readonly List<byte> Code = new List<byte>();
+        public readonly List<double> Constants = new List<double>();
+        public readonly List<int> Lines = new List<int>();
 
         public void WriteChunk(byte code, int line)
         {
-            _code.Add(code);
-            _lines.Add(line);
+            Code.Add(code);
+            Lines.Add(line);
         }
 
         public byte AddConstant(double constant)
         {
-            if (_constants.Count > byte.MaxValue)
-            {
-                throw new Exception("Constant pool is overflowed.");
-            }
-
-            _constants.Add(constant);
-            return (byte)(_constants.Count - 1);
+            Constants.Add(constant);
+            return (byte)(Constants.Count - 1);
         }
     }
 }

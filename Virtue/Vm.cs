@@ -7,13 +7,11 @@ namespace Virtue
 {
     internal class Vm
     {
-        private static readonly Lazy<Vm> Lazy =
-            new Lazy<Vm>(() => new Vm());
-
+        private static readonly Lazy<Vm> Lazy = new Lazy<Vm>(() => new Vm());
         public static Vm Instance => Lazy.Value;
 
-        public Chunk Chunk { get; private set; }
         private int _ip;
+        private Chunk _chunk;
         private readonly Stack<double> _stack;
 
         private Vm()
@@ -23,15 +21,15 @@ namespace Virtue
 
         public InterpretResult Interpret(Chunk chunk)
         {
-            Chunk = chunk;
             _ip = 0;
+            _chunk = chunk;
             return Run();
         }
 
         private InterpretResult Run()
         {
-            byte ReadByte() => Chunk.GetCodeAt(_ip++);
-            double ReadConstant() => Chunk.GetConstantAt(ReadByte());
+            byte ReadByte() => _chunk.Code[_ip++];
+            double ReadConstant() => _chunk.Constants[ReadByte()];
 
             while (true)
             {
@@ -44,7 +42,7 @@ namespace Virtue
                     Console.Write(" ]");
                 }
                 Console.WriteLine();
-                Debug.DisassembleInstruction(Chunk, _ip);
+                Debug.DisassembleInstruction(_chunk, _ip);
 #endif
                 OpCode instruction;
                 switch (instruction = (OpCode)ReadByte())
