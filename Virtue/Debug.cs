@@ -18,6 +18,15 @@ namespace Virtue
         {
             Console.Write($"{offset:D4} ");
 
+            if (offset > 0 && chunk.GetLineAt(offset) == chunk.GetLineAt(offset - 1))
+            {
+                Console.Write("   | ");
+            }
+            else
+            {
+                Console.Write($"{chunk.GetLineAt(offset):D4} ");
+            }
+
             var instruction = (OpCode)chunk.GetCodeAt(offset);
             switch (instruction)
             {

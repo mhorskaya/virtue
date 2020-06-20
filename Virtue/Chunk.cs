@@ -7,6 +7,7 @@ namespace Virtue
     {
         private readonly List<byte> _code;
         private readonly List<double> _constants;
+        private readonly List<int> _lines;
 
         public int CodeCount => _code.Count;
 
@@ -14,15 +15,19 @@ namespace Virtue
 
         public double GetConstantAt(int index) => _constants[index];
 
+        public int GetLineAt(int index) => _lines[index];
+
         public Chunk()
         {
             _code = new List<byte>();
             _constants = new List<double>();
+            _lines = new List<int>();
         }
 
-        public void WriteChunk(byte code)
+        public void WriteChunk(byte code, int line)
         {
             _code.Add(code);
+            _lines.Add(line);
         }
 
         public byte AddConstant(double constant)
