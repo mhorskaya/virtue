@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Virtue
 {
@@ -30,15 +31,21 @@ namespace Virtue
         {
             byte ReadByte() => _chunk.Code[_ip++];
             double ReadConstant() => _chunk.Constants[ReadByte()];
+            void BinaryOp(Func<double, double, double> op)
+            {
+                var b = _stack.Pop();
+                var a = _stack.Pop();
+                _stack.Push(op(a, b));
+            }
 
             while (true)
             {
 #if DEBUG_TRACE_EXECUTION
                 Console.Write("          ");
-                foreach (var value in _stack)
+                for (var i = _stack.Count - 1; i >= 0; i--)
                 {
                     Console.Write("[ ");
-                    Debug.PrintValue(value);
+                    Debug.PrintValue(_stack.ElementAt(i));
                     Console.Write(" ]");
                 }
                 Console.WriteLine();
@@ -50,6 +57,22 @@ namespace Virtue
                     case OpCode.Constant:
                         var constant = ReadConstant();
                         _stack.Push(constant);
+                        break;
+
+                    case OpCode.Add:
+                        BinaryOp((a, b) => a + b);
+                        break;
+
+                    case OpCode.Subtract:
+                        BinaryOp((a, b) => a - b);
+                        break;
+
+                    case OpCode.Multiply:
+                        BinaryOp((a, b) => a * b);
+                        break;
+
+                    case OpCode.Divide:
+                        BinaryOp((a, b) => a / b);
                         break;
 
                     case OpCode.Negate:

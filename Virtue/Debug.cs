@@ -31,6 +31,18 @@ namespace Virtue
                 case OpCode.Constant:
                     return ConstantInstruction("CONSTANT", chunk, offset);
 
+                case OpCode.Add:
+                    return SimpleInstruction("ADD", offset);
+
+                case OpCode.Subtract:
+                    return SimpleInstruction("SUBTRACT", offset);
+
+                case OpCode.Multiply:
+                    return SimpleInstruction("MULTIPLY", offset);
+
+                case OpCode.Divide:
+                    return SimpleInstruction("DIVIDE", offset);
+
                 case OpCode.Negate:
                     return SimpleInstruction("NEGATE", offset);
 
