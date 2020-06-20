@@ -3,6 +3,7 @@
     internal enum OpCode : byte
     {
         Constant,
+        Negate,
         Return
     }
 }

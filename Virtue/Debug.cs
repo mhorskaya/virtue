@@ -33,6 +33,9 @@ namespace Virtue
                 case OpCode.Constant:
                     return ConstantInstruction("CONSTANT", chunk, offset);
 
+                case OpCode.Negate:
+                    return SimpleInstruction("NEGATE", offset);
+
                 case OpCode.Return:
                     return SimpleInstruction("RETURN", offset);
 

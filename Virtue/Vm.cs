@@ -1,6 +1,7 @@
 ﻿#define DEBUG_TRACE_EXECUTION
 
 using System;
+using System.Collections.Generic;
 
 namespace Virtue
 {
@@ -11,14 +12,16 @@ namespace Virtue
 
         public static Vm Instance => Lazy.Value;
 
-        public Chunk Chunk { get; set; }
+        public Chunk Chunk { get; private set; }
         private int _ip;
+        private readonly Stack<double> _stack;
 
         private Vm()
         {
+            _stack = new Stack<double>();
         }
 
-        private InterpretResult Interpret(Chunk chunk)
+        public InterpretResult Interpret(Chunk chunk)
         {
             Chunk = chunk;
             _ip = 0;
@@ -33,6 +36,14 @@ namespace Virtue
             while (true)
             {
 #if DEBUG_TRACE_EXECUTION
+                Console.Write("          ");
+                foreach (var value in _stack)
+                {
+                    Console.Write("[ ");
+                    Debug.PrintValue(value);
+                    Console.Write(" ]");
+                }
+                Console.WriteLine();
                 Debug.DisassembleInstruction(Chunk, _ip);
 #endif
                 OpCode instruction;
@@ -40,11 +51,16 @@ namespace Virtue
                 {
                     case OpCode.Constant:
                         var constant = ReadConstant();
-                        Debug.PrintValue(constant);
-                        Console.WriteLine();
+                        _stack.Push(constant);
+                        break;
+
+                    case OpCode.Negate:
+                        _stack.Push(-_stack.Pop());
                         break;
 
                     case OpCode.Return:
+                        Debug.PrintValue(_stack.Pop());
+                        Console.WriteLine();
                         return InterpretResult.Ok;
                 }
             }
