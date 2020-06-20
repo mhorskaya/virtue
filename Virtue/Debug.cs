@@ -14,7 +14,7 @@ namespace Virtue
             }
         }
 
-        private static int DisassembleInstruction(Chunk chunk, int offset)
+        public static int DisassembleInstruction(Chunk chunk, int offset)
         {
             Console.Write($"{offset:D4} ");
 
@@ -57,7 +57,7 @@ namespace Virtue
             return offset + 1;
         }
 
-        private static void PrintValue(double value)
+        public static void PrintValue(double value)
         {
             Console.Write($"{value:g} ");
         }
