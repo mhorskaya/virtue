@@ -8,7 +8,7 @@ namespace Virtue
         {
             Console.WriteLine($"== {name} ==");
 
-            for (var offset = 0; offset < chunk.Code.Count;)
+            for (var offset = 0; offset < chunk.CodeCount;)
             {
                 offset = DisassembleInstruction(chunk, offset);
             }
@@ -18,11 +18,14 @@ namespace Virtue
         {
             Console.Write($"{offset:D4} ");
 
-            var instruction = chunk.Code[offset];
+            var instruction = (OpCode)chunk.GetCodeAt(offset);
             switch (instruction)
             {
+                case OpCode.Constant:
+                    return ConstantInstruction("CONSTANT", chunk, offset);
+
                 case OpCode.Return:
-                    return SimpleInstruction("Return", offset);
+                    return SimpleInstruction("RETURN", offset);
 
                 default:
                     Console.WriteLine($"Unknown OpCode {instruction}");
@@ -30,10 +33,24 @@ namespace Virtue
             }
         }
 
+        private static int ConstantInstruction(string name, Chunk chunk, int offset)
+        {
+            var constantIndex = chunk.GetCodeAt(offset + 1);
+            Console.Write($"{name,-16} {constantIndex:D4} '");
+            PrintValue(chunk.GetConstantAt(constantIndex));
+            Console.WriteLine();
+            return offset + 2;
+        }
+
         private static int SimpleInstruction(string name, int offset)
         {
             Console.WriteLine(name);
             return offset + 1;
+        }
+
+        private static void PrintValue(double value)
+        {
+            Console.Write($"{value:g} ");
         }
     }
 }
