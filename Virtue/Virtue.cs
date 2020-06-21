@@ -1,35 +1,43 @@
-﻿namespace Virtue
+﻿using System;
+using System.IO;
+
+namespace Virtue
 {
     internal class Virtue
     {
+        private static readonly Vm Vm = Vm.Instance;
+
         private static void Main(string[] args)
         {
-            var vm = Vm.Instance;
+            if (args.Length == 0)
+            {
+                Repl();
+            }
+            else if (args.Length == 1)
+            {
+                RunFile(args[0]);
+            }
+            else
+            {
+                Console.WriteLine("Usage: virtue [path]");
+                Environment.Exit(64);
+            }
+        }
 
-            var chunk = new Chunk();
+        private static void Repl()
+        {
+            while (true)
+            {
+                Console.Write("> ");
+                Vm.Interpret(Console.ReadLine());
+            }
+        }
 
-            var constant = chunk.AddConstant(1.2);
-            chunk.WriteChunk((byte)OpCode.Constant, 123);
-            chunk.WriteChunk(constant, 123);
-
-            constant = chunk.AddConstant(3.4);
-            chunk.WriteChunk((byte)OpCode.Constant, 123);
-            chunk.WriteChunk(constant, 123);
-
-            chunk.WriteChunk((byte)OpCode.Add, 123);
-
-            constant = chunk.AddConstant(5.6);
-            chunk.WriteChunk((byte)OpCode.Constant, 123);
-            chunk.WriteChunk(constant, 123);
-
-            chunk.WriteChunk((byte)OpCode.Divide, 123);
-
-            chunk.WriteChunk((byte)OpCode.Negate, 123);
-            chunk.WriteChunk((byte)OpCode.Return, 123);
-
-            Debug.DisassembleChunk(chunk, "Test Chunk");
-
-            vm.Interpret(chunk);
+        private static void RunFile(string path)
+        {
+            var result = Vm.Interpret(File.ReadAllText(path));
+            if (result == InterpretResult.CompileError) Environment.Exit(65);
+            if (result == InterpretResult.RuntimeError) Environment.Exit(70);
         }
     }
 }

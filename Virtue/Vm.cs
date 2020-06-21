@@ -20,11 +20,13 @@ namespace Virtue
             _stack = new Stack<double>();
         }
 
-        public InterpretResult Interpret(Chunk chunk)
+        public InterpretResult Interpret(string source)
         {
-            _ip = 0;
-            _chunk = chunk;
-            return Run();
+            Compiler.Compile(source);
+            return InterpretResult.Ok;
+            //_ip = 0;
+            //_chunk = chunk;
+            //return Run();
         }
 
         private InterpretResult Run()
