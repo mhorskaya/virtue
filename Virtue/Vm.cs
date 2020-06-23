@@ -22,11 +22,15 @@ namespace Virtue
 
         public InterpretResult Interpret(string source)
         {
-            Compiler.Compile(source);
+            if (!Compiler.Compile(source, _chunk))
+            {
+                return InterpretResult.CompileError;
+            }
+
             return InterpretResult.Ok;
-            //_ip = 0;
+            _ip = 0;
             //_chunk = chunk;
-            //return Run();
+            return Run();
         }
 
         private InterpretResult Run()
