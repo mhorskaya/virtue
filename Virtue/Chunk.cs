@@ -14,10 +14,10 @@ namespace Virtue
             Lines.Add(line);
         }
 
-        public byte AddConstant(double constant)
+        public int AddConstant(double constant)
         {
             Constants.Add(constant);
-            return (byte)(Constants.Count - 1);
+            return Constants.Count - 1;
         }
     }
 }
