@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define DEBUG_PRINT_CODE
+
+using System;
 
 namespace Virtue
 {
@@ -108,6 +110,12 @@ namespace Virtue
         private static void EndCompiler()
         {
             EmitReturn();
+#if DEBUG_PRINT_CODE
+            if (!Parser.HadError)
+            {
+                Debug.DisassembleChunk(CurrentChunk(), "code");
+            }
+#endif
         }
 
         private static void Grouping()

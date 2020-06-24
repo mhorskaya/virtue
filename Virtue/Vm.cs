@@ -22,40 +22,23 @@ namespace Virtue
 
         public InterpretResult Interpret(string source)
         {
-            if (!Compiler.Compile(source, _chunk))
+            var chunk = new Chunk();
+            if (!Compiler.Compile(source, chunk))
             {
                 return InterpretResult.CompileError;
             }
 
-            return InterpretResult.Ok;
+            _chunk = chunk;
             _ip = 0;
-            //_chunk = chunk;
             return Run();
         }
 
         private InterpretResult Run()
         {
-            byte ReadByte() => _chunk.Code[_ip++];
-            double ReadConstant() => _chunk.Constants[ReadByte()];
-            void BinaryOp(Func<double, double, double> op)
-            {
-                var b = _stack.Pop();
-                var a = _stack.Pop();
-                _stack.Push(op(a, b));
-            }
-
             while (true)
             {
 #if DEBUG_TRACE_EXECUTION
-                Console.Write("          ");
-                for (var i = _stack.Count - 1; i >= 0; i--)
-                {
-                    Console.Write("[ ");
-                    Debug.PrintValue(_stack.ElementAt(i));
-                    Console.Write(" ]");
-                }
-                Console.WriteLine();
-                Debug.DisassembleInstruction(_chunk, _ip);
+                ShowDebugTraceExecution();
 #endif
                 OpCode instruction;
                 switch (instruction = (OpCode)ReadByte())
@@ -91,6 +74,29 @@ namespace Virtue
                         return InterpretResult.Ok;
                 }
             }
+
+            byte ReadByte() => _chunk.Code[_ip++];
+            double ReadConstant() => _chunk.Constants[ReadByte()];
+            void BinaryOp(Func<double, double, double> op)
+            {
+                var b = _stack.Pop();
+                var a = _stack.Pop();
+                _stack.Push(op(a, b));
+            }
+        }
+
+        private void ShowDebugTraceExecution()
+        {
+            Console.Write("          ");
+            for (var i = _stack.Count - 1; i >= 0; i--)
+            {
+                Console.Write("[ ");
+                Debug.PrintValue(_stack.ElementAt(i));
+                Console.Write("]");
+            }
+
+            Console.WriteLine();
+            Debug.DisassembleInstruction(_chunk, _ip);
         }
     }
 }
